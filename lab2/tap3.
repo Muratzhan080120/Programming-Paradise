@@ -1,0 +1,14 @@
+score = int(input("Введите балл от 0 до 100: "))
+
+if 90 <= score <= 100:
+    grade = "A"
+elif 75 <= score <= 89:
+    grade = "B"
+elif 50 <= score <= 74:
+    grade = "C"
+elif 0 <= score <= 49:
+    grade = "F"
+else:
+    grade = "Ошибка: балл должен быть от 0 до 100."
+
+print(grade)
