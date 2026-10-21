@@ -1,0 +1,11 @@
+PASSING_AVERAGE = 50
+
+
+def calculate_average(scores):
+    return sum(scores) / len(scores) if scores else None
+
+
+def determine_status(average):
+    if average is None:
+        return "нет данных"
+    return "допущен" if average >= PASSING_AVERAGE else "не допущен"
