@@ -1,0 +1,28 @@
+def is_positive(number: int) -> bool:
+    return number > 0
+
+
+def square(number: int) -> int:
+    return number ** 2
+
+
+def get_positive_numbers(values: list[int]) -> list[int]:
+    return [number for number in values if is_positive(number)]
+
+
+def sum_positive_squares(values: list[int]) -> int:
+    total = 0
+    for number in values:
+        if is_positive(number):
+            total += square(number)
+    return total
+
+
+numbers = [-5, 3, 7, -2, 4, 0, 10, -1]
+
+print("Положительные числа:", get_positive_numbers(numbers))
+print("Квадраты:", [square(n) for n in get_positive_numbers(numbers)])
+print("Сумма квадратов:", sum_positive_squares(numbers))
+
+print("is_positive(3):", is_positive(3))
+print("square(7):", square(7))/
