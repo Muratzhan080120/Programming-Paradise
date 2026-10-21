@@ -1,0 +1,33 @@
+import unittest
+
+
+class AttendanceTests(unittest.TestCase):
+
+    def test_attendance_rate(self):
+        self.assertEqual(attendance_rate([1, 1, 0, 1]), 75.0)
+
+    def test_empty_attendance(self):
+        self.assertIsNone(attendance_rate([]))
+
+    def test_invalid_mark_value(self):
+        with self.assertRaises(ValueError):
+            attendance_rate([1, 2, 0])
+
+    def test_invalid_mark_type(self):
+        with self.assertRaises(TypeError):
+            attendance_rate([1, "1", 0])
+
+    def test_boundary_access(self):
+        self.assertEqual(
+            determine_access(75, pass_mark=75),
+            "допущен"
+        )
+
+    def test_input_is_not_changed(self):
+        source = [1, 0, 1]
+        attendance_rate(source)
+        self.assertEqual(source, [1, 0, 1])
+
+
+if __name__ == "__main__":
+    unittest.main()
