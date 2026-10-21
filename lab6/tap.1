@@ -1,0 +1,119 @@
+from typing import Protocol
+import json
+import csv
+from io import StringIO
+
+
+class Exporter(Protocol):
+    def export(self, students: list) -> str:
+        ...
+
+
+class TextExporter:
+    def export(self, students: list) -> str:
+        lines = ["Имя | Средний балл | Статус"]
+        for student in students:
+            average = "—" if student.average is None else f"{student.average:.2f}"
+            lines.append(f"{student.name} | {average} | {student.status}")
+        return "\n".join(lines)
+
+
+class CsvExporter:
+    def export(self, students: list) -> str:
+        buffer = StringIO()
+        writer = csv.writer(buffer, lineterminator="\n")
+        writer.writerow(["name", "average", "status"])
+
+        for student in students:
+            average = "" if student.average is None else f"{student.average:.2f}"
+            writer.writerow([student.name, average, student.status])
+
+        return buffer.getvalue().rstrip("\n")
+
+
+class MemoryExporter:
+    def __init__(self):
+        self.last_export = None
+
+    def export(self, students: list) -> str:
+        data = []
+        for student in students:
+            data.append({
+                "name": student.name,
+                "average": None if student.average is None else round(student.average, 2),
+                "status": student.status
+            })
+
+        self.last_export = data
+        return json.dumps(data, ensure_ascii=False)
+
+
+class JsonExporter:
+    def export(self, students: list) -> str:
+        data = []
+        for student in students:
+            data.append({
+                "name": student.name,
+                "average": None if student.average is None else round(student.average, 2),
+                "status": student.status
+            })
+
+        return json.dumps(data, ensure_ascii=False, indent=2)
+
+
+class Student:
+    def __init__(self, student_id: int, name: str):
+        if isinstance(student_id, bool) or not isinstance(student_id, int):
+            raise TypeError("ID должен быть целым числом")
+        if student_id <= 0:
+            raise ValueError("ID должен быть положительным")
+        if not isinstance(name, str) or not name.strip():
+            raise ValueError("Имя не должно быть пустым")
+
+        self.student_id = student_id
+        self.name = name.strip()
+        self._scores = []
+
+    def add_score(self, score):
+        if isinstance(score, bool) or not isinstance(score, (int, float)):
+            raise TypeError("Балл должен быть числом")
+        if not 0 <= score <= 100:
+            raise ValueError("Балл должен быть от 0 до 100")
+
+        self._scores.append(float(score))
+
+    @property
+    def average(self):
+        return sum(self._scores) / len(self._scores) if self._scores else None
+
+    @property
+    def status(self):
+        if self.average is None:
+            return "нет данных"
+        return "допущен" if self.average >= 50 else "не допущен"
+
+
+class GradeBook:
+    def __init__(self, exporter: Exporter):
+        self._students = {}
+        self._exporter = exporter
+
+    def register(self, student: Student):
+        if not isinstance(student, Student):
+            raise TypeError("Ожидается объект Student")
+        if student.student_id in self._students:
+            raise ValueError("Студент уже зарегистрирован")
+
+        self._students[student.student_id] = student
+
+    def add_score(self, student_id, score):
+        self._get_student(student_id).add_score(score)
+
+    def export(self) -> str:
+        return self._exporter.export(tuple(self._students.values()))
+
+    def _get_student(self, student_id):
+        try:
+            return self._students[student_id]
+        except KeyError as error:
+            raise KeyError("Студент не найден") from error
