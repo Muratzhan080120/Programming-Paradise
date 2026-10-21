@@ -1,0 +1,31 @@
+from datetime import date, timedelta
+from attendance import StudentAttendance, AttendanceJournal
+
+
+journal = AttendanceJournal()
+
+journal.register(StudentAttendance(101, "Amina", "IS-24-1"))
+journal.register(StudentAttendance(102, "Dias", "IS-24-1"))
+journal.register(StudentAttendance(103, "Mira", "IS-24-1"))
+
+start = date(2026, 9, 1)
+
+for i in range(7):
+    journal.mark_present(101, start + timedelta(days=i))
+for i in range(7, 10):
+    journal.mark_absent(101, start + timedelta(days=i))
+
+for i in range(4):
+    journal.mark_present(102, start + timedelta(days=i))
+for i in range(4, 10):
+    journal.mark_absent(102, start + timedelta(days=i))
+
+for i in range(3):
+    journal.mark_excused(103, start + timedelta(days=i))
+
+for student in journal.rating():
+    rate = (
+        "—" if student.attendance_rate is None
+        else f"{student.attendance_rate:.2f}%"
+    )
+    print(f"{student.name}: {rate}; {student.status}")
