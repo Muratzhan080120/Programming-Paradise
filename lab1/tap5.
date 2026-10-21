@@ -1,0 +1,30 @@
+import tkinter as tk
+
+def calculate():
+    try:
+        values = [int(x) for x in entry.get().split()]
+        result = sum(n ** 2 for n in values if n > 0)
+        result_label.config(text=f"Результат: {result}")
+    except ValueError:
+        result_label.config(text="Ошибка: введите целые числа через пробел")
+
+
+def clear():
+    entry.delete(0, tk.END)
+    result_label.config(text="Результат: —")
+
+
+root = tk.Tk()
+root.title("Парадигмы программирования")
+
+entry = tk.Entry(root, width=45)
+entry.pack(padx=20, pady=10)
+entry.insert(0, "-5 3 7 -2 4 0 10 -1")
+
+result_label = tk.Label(root, text="Результат: —")
+result_label.pack(padx=20, pady=10)
+
+tk.Button(root, text="Вычислить", command=calculate).pack(pady=5)
+tk.Button(root, text="Очистить", command=clear).pack(pady=5)
+
+root.mainloop()
