@@ -1,0 +1,12 @@
+balance = float(input("Введите баланс: "))
+withdrawal = float(input("Введите сумму снятия: "))
+
+if withdrawal <= 0:
+    print("Ошибка: сумма снятия должна быть положительной.")
+elif withdrawal <= balance:
+    balance = balance - withdrawal
+    print("Операция выполнена.")
+    print("Новый баланс:", balance)
+else:
+    print("Недостаточно средств.")
+    print("Баланс:", balance)
