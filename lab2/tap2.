@@ -1,0 +1,11 @@
+price = float(input("Цена товара: "))
+quantity = int(input("Количество: "))
+discount_percent = float(input("Скидка (%): "))
+
+total = price * quantity
+discount = total * discount_percent / 100
+to_pay = total - discount
+
+print("Стоимость без скидки:", total)
+print("Размер скидки:", discount)
+print("К оплате:", to_pay)
