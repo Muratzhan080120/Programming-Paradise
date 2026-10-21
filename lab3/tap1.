@@ -1,0 +1,108 @@
+def validate_mark(mark):
+    """Проверяет отметку посещаемости: 1 — был, 0 — отсутствовал."""
+    if isinstance(mark, bool) or not isinstance(mark, int):
+        raise TypeError("Отметка должна быть целым числом 0 или 1")
+    if mark not in (0, 1):
+        raise ValueError("Отметка должна быть 0 или 1")
+    return mark
+
+
+def attendance_rate(marks):
+    """Возвращает процент посещаемости или None для пустого списка."""
+    checked = [validate_mark(mark) for mark in marks]
+    if not checked:
+        return None
+    return sum(checked) / len(checked) * 100
+
+
+def determine_access(rate, pass_mark=75):
+    """Определяет статус допуска по проценту посещаемости."""
+    if not 0 <= pass_mark <= 100:
+        raise ValueError("Порог должен быть от 0 до 100")
+    if rate is None:
+        return "нет данных"
+    return "допущен" if rate >= pass_mark else "не допущен"
+
+
+def summarize_student(student, pass_mark=75):
+    """Возвращает новую сводную запись студента."""
+    student_id = student.get("id")
+    name = student.get("name")
+
+    if isinstance(student_id, bool) or not isinstance(student_id, int):
+        raise TypeError("Идентификатор должен быть целым числом")
+    if student_id <= 0:
+        raise ValueError("Идентификатор должен быть положительным")
+    if not isinstance(name, str) or not name.strip():
+        raise ValueError("Имя не может быть пустым")
+
+    marks = student.get("attendance", [])
+    rate = attendance_rate(marks)
+
+    return {
+        "id": student_id,
+        "name": name.strip(),
+        "rate": rate,
+        "status": determine_access(rate, pass_mark)
+    }
+
+
+def build_rating(students, pass_mark=75):
+    """Формирует рейтинг студентов по посещаемости."""
+    summaries = [
+        summarize_student(student, pass_mark)
+        for student in students
+    ]
+
+    return sorted(
+        summaries,
+        key=lambda item: (
+            item["rate"] is not None,
+            item["rate"] or 0
+        ),
+        reverse=True
+    )
+
+
+def filter_by_threshold(rating, threshold=75):
+    """Отбирает студентов с посещаемостью не ниже порога."""
+    if not 0 <= threshold <= 100:
+        raise ValueError("Порог должен быть от 0 до 100")
+
+    return [
+        item for item in rating
+        if item["rate"] is not None and item["rate"] >= threshold
+    ]
+
+
+def format_report(rating):
+    """Формирует текстовый отчёт."""
+    lines = []
+
+    for position, item in enumerate(rating, start=1):
+        rate = "—" if item["rate"] is None else f"{item['rate']:.2f}%"
+        lines.append(
+            f"{position}. {item['name']}: {rate}; {item['status']}"
+        )
+
+    return "\n".join(lines)
+
+
+def main():
+    students = [
+        {"id": 101, "name": "Amina", "attendance": [1, 1, 1, 1, 0]},
+        {"id": 102, "name": "Dias", "attendance": [1, 0, 1, 0, 0]},
+        {"id": 103, "name": "Mira", "attendance": []},
+        {"id": 104, "name": "Arman", "attendance": [1, 1, 1, 0, 1]},
+    ]
+
+    rating = build_rating(students, pass_mark=75)
+    admitted = filter_by_threshold(rating, threshold=75)
+
+    print("Рейтинг:")
+    print(format_report(rating))
+    print("\nКоличество допущенных:", len(admitted))
+
+
+if __name__ == "__main__":
+    main()
