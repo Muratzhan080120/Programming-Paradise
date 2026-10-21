@@ -1,0 +1,39 @@
+
+Spreadsheet runtime warmup failed during python startup
+Traceback (most recent call last):
+  File "/tmp/tmp.QlpUkOUI9D/artifact_tool_v2-2.8.66/artifact_tool/patches/warm_spreadsheet_runtime_on_startup.py", line 26, in warm_spreadsheet_runtime_on_startup
+  File "/tmp/tmp.QlpUkOUI9D/artifact_tool_v2-2.8.66/artifact_tool/spreadsheet_warmup.py", line 785, in warm_spreadsheet_runtime
+  File "/tmp/tmp.QlpUkOUI9D/artifact_tool_v2-2.8.66/artifact_tool/spreadsheet_warmup.py", line 718, in _warm_feature_flows
+  File "/tmp/tmp.QlpUkOUI9D/artifact_tool_v2-2.8.66/artifact_tool/spreadsheet_warmup.py", line 509, in _warm_drawing_and_image_flows
+  File "/tmp/tmp.QlpUkOUI9D/artifact_tool_v2-2.8.66/artifact_tool/generated/interface/models.py", line 32861, in bring_to_front
+  File "/tmp/tmp.QlpUkOUI9D/artifact_tool_v2-2.8.66/artifact_tool/rpc/remote.py", line 764, in __call__
+  File "/tmp/tmp.QlpUkOUI9D/artifact_tool_v2-2.8.66/artifact_tool/rpc/client.py", line 175, in call
+artifact_tool.rpc.client.RemoteError: Element ordering requires an owning element collection.
+test_complete_response (test_project.QualitySurveyTests.test_complete_response) ... ok
+test_csv_loader (test_project.QualitySurveyTests.test_csv_loader) ... ok
+test_default_survey_has_five_questions (test_project.QualitySurveyTests.test_default_survey_has_five_questions) ... ok
+test_empty_mean_raises (test_project.QualitySurveyTests.test_empty_mean_raises) ... ok
+test_empty_median_raises (test_project.QualitySurveyTests.test_empty_median_raises) ... ok
+test_filter_complete_responses (test_project.QualitySurveyTests.test_filter_complete_responses) ... ok
+test_format_report_contains_summary (test_project.QualitySurveyTests.test_format_report_contains_summary) ... ok
+test_higher_order_filter (test_project.QualitySurveyTests.test_higher_order_filter) ... ok
+test_incomplete_response (test_project.QualitySurveyTests.test_incomplete_response) ... ok
+test_invalid_float_rating (test_project.QualitySurveyTests.test_invalid_float_rating) ... ok
+test_invalid_rating_six (test_project.QualitySurveyTests.test_invalid_rating_six) ... ok
+test_invalid_rating_zero (test_project.QualitySurveyTests.test_invalid_rating_zero) ... ok
+test_mean_aggregator (test_project.QualitySurveyTests.test_mean_aggregator) ... ok
+test_median_aggregator_even_count (test_project.QualitySurveyTests.test_median_aggregator_even_count) ... ok
+test_problem_question_threshold (test_project.QualitySurveyTests.test_problem_question_threshold) ... ok
+test_recursive_count (test_project.QualitySurveyTests.test_recursive_count) ... ok
+test_report_counts_incomplete (test_project.QualitySurveyTests.test_report_counts_incomplete) ... ok
+test_report_has_course_name (test_project.QualitySurveyTests.test_report_has_course_name) ... ok
+test_response_with_missing_question_field (test_project.QualitySurveyTests.test_response_with_missing_question_field) ... ok
+test_survey_rejects_empty_name (test_project.QualitySurveyTests.test_survey_rejects_empty_name) ... ok
+test_survey_rejects_empty_questions (test_project.QualitySurveyTests.test_survey_rejects_empty_questions) ... ok
+test_threshold_out_of_range (test_project.QualitySurveyTests.test_threshold_out_of_range) ... ok
+test_valid_rating_range (test_project.QualitySurveyTests.test_valid_rating_range) ... ok
+
+----------------------------------------------------------------------
+Ran 23 tests in 0.003s
+
+OK
