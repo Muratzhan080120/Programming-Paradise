@@ -1,0 +1,107 @@
+from datetime import date
+
+
+class StudentAttendance:
+    def __init__(self, student_id, name, group):
+        if not isinstance(student_id, int) or isinstance(student_id, bool):
+            raise TypeError("ID должен быть целым числом")
+        if student_id <= 0:
+            raise ValueError("ID должен быть положительным")
+        if not isinstance(name, str) or not name.strip():
+            raise ValueError("Имя не должно быть пустым")
+        if not isinstance(group, str) or not group.strip():
+            raise ValueError("Группа не должна быть пустой")
+
+        self.student_id = student_id
+        self.name = name.strip()
+        self.group = group.strip()
+        self._present = set()
+        self._absent = set()
+        self._excused = set()
+
+    @staticmethod
+    def _validate_date(day):
+        if not isinstance(day, date):
+            raise TypeError("Дата должна быть объектом date")
+
+    def mark_present(self, day):
+        self._validate_date(day)
+        self._absent.discard(day)
+        self._excused.discard(day)
+        self._present.add(day)
+
+    def mark_absent(self, day):
+        self._validate_date(day)
+        self._present.discard(day)
+        self._excused.discard(day)
+        self._absent.add(day)
+
+    def mark_excused(self, day):
+        self._validate_date(day)
+        self._present.discard(day)
+        self._absent.discard(day)
+        self._excused.add(day)
+
+    @property
+    def present_dates(self):
+        return tuple(sorted(self._present))
+
+    @property
+    def absent_dates(self):
+        return tuple(sorted(self._absent))
+
+    @property
+    def excused_dates(self):
+        return tuple(sorted(self._excused))
+
+    @property
+    def attendance_rate(self):
+        total = len(self._present | self._absent)
+        if total == 0:
+            return None
+        return len(self._present) / total * 100
+
+    @property
+    def status(self):
+        if self.attendance_rate is None:
+            return "нет данных"
+        return "допущен" if self.attendance_rate >= 70 else "не допущен"
+
+
+class AttendanceJournal:
+    def __init__(self):
+        self._students = {}
+
+    def register(self, student):
+        if not isinstance(student, StudentAttendance):
+            raise TypeError("Ожидается объект StudentAttendance")
+        if student.student_id in self._students:
+            raise ValueError("Студент уже зарегистрирован")
+        self._students[student.student_id] = student
+
+    def find(self, student_id):
+        return self._students.get(student_id)
+
+    def _get_student(self, student_id):
+        if student_id not in self._students:
+            raise KeyError("Студент не найден")
+        return self._students[student_id]
+
+    def mark_present(self, student_id, day):
+        self._get_student(student_id).mark_present(day)
+
+    def mark_absent(self, student_id, day):
+        self._get_student(student_id).mark_absent(day)
+
+    def mark_excused(self, student_id, day):
+        self._get_student(student_id).mark_excused(day)
+
+    def rating(self):
+        return tuple(sorted(
+            self._students.values(),
+            key=lambda student: (
+                student.attendance_rate is not None,
+                student.attendance_rate or 0
+            ),
+            reverse=True
+        ))
