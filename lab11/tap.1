@@ -1,0 +1,166 @@
+
+import tkinter as tk
+from tkinter import ttk, messagebox
+
+root = tk.Tk()
+root.title("Регистрация на дисциплину")
+root.geometry("620x430")
+root.minsize(520, 360)
+
+# Переменные состояния интерфейса
+name_var = tk.StringVar()
+course_var = tk.StringVar(value="Парадигмы программирования")
+status_var = tk.StringVar(value="Готово")
+count_var = tk.StringVar(value="Регистраций: 0")
+
+# Данные приложения
+registrations = []
+
+# Основной контейнер
+frame = ttk.Frame(root, padding=16)
+frame.pack(fill="both", expand=True)
+frame.columnconfigure(1, weight=1)
+frame.rowconfigure(3, weight=1)
+
+ttk.Label(frame, text="Имя участника").grid(
+    row=0, column=0, sticky="w", pady=5
+)
+name_entry = ttk.Entry(frame, textvariable=name_var)
+name_entry.grid(
+    row=0, column=1, columnspan=2,
+    sticky="ew", padx=8, pady=5
+)
+
+ttk.Label(frame, text="Дисциплина").grid(
+    row=1, column=0, sticky="w", pady=5
+)
+
+course_box = ttk.Combobox(
+    frame,
+    textvariable=course_var,
+    state="readonly",
+    values=[
+        "Парадигмы программирования",
+        "Базы данных",
+        "Искусственный интеллект"
+    ]
+)
+course_box.grid(
+    row=1, column=1, columnspan=2,
+    sticky="ew", padx=8, pady=5
+)
+
+register_button = ttk.Button(
+    frame, text="Зарегистрировать"
+)
+register_button.grid(
+    row=2, column=1, sticky="ew", padx=8, pady=8
+)
+
+clear_button = ttk.Button(
+    frame, text="Очистить список"
+)
+clear_button.grid(
+    row=2, column=2, sticky="ew", pady=8
+)
+
+result_list = tk.Listbox(frame, height=10)
+result_list.grid(
+    row=3, column=0, columnspan=3,
+    sticky="nsew", pady=8
+)
+
+ttk.Label(frame, textvariable=count_var).grid(
+    row=4, column=0, sticky="w"
+)
+
+ttk.Label(frame, textvariable=status_var).grid(
+    row=4, column=1, columnspan=2, sticky="e"
+)
+
+
+def reset_status():
+    """Возвращает строку состояния."""
+    status_var.set("Готово")
+
+
+def set_status(message):
+    """Показывает сообщение на 2,5 секунды."""
+    status_var.set(message)
+    root.after(2500, reset_status)
+
+
+def register():
+    """Проверяет данные и добавляет регистрацию."""
+    name = name_var.get().strip()
+    course = course_var.get()
+
+    if len(name) < 2:
+        messagebox.showwarning(
+            "Проверка данных",
+            "Введите имя длиной не менее двух символов."
+        )
+        status_var.set("Необходимо указать корректное имя")
+        name_entry.focus_set()
+        return
+
+    item = (name.casefold(), course)
+
+    if item in registrations:
+        set_status("Такая регистрация уже существует")
+        name_entry.focus_set()
+        return
+
+    registrations.append(item)
+
+    result_list.insert(
+        tk.END, f"{name} — {course}"
+    )
+
+    count_var.set(
+        f"Регистраций: {len(registrations)}"
+    )
+
+    set_status("Регистрация добавлена")
+
+    name_var.set("")
+    name_entry.focus_set()
+
+
+def register_from_event(event):
+    """Обработчик клавиши Enter."""
+    register()
+
+
+def clear_all():
+    """Очищает список после подтверждения."""
+    if not registrations:
+        set_status("Список уже пуст")
+        return
+
+    confirmed = messagebox.askyesno(
+        "Подтверждение",
+        "Удалить все регистрации?"
+    )
+
+    if not confirmed:
+        set_status("Очистка отменена")
+        return
+
+    registrations.clear()
+    result_list.delete(0, tk.END)
+    count_var.set("Регистраций: 0")
+
+    set_status("Список очищен")
+
+
+# Регистрация обработчиков событий
+register_button.config(command=register)
+clear_button.config(command=clear_all)
+
+root.bind("<Return>", register_from_event)
+
+name_entry.focus_set()
+
+# Запуск главного цикла
+root.mainloop()
